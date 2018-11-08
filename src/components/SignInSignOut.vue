@@ -5,10 +5,14 @@
       <button @click="signout">Sign Out</button>
     </div>
     <form id="signin" class="signin" v-else @submit.prevent="signin">
-      <input type="text" v-model="email" placeholder="Email">
-      <input type="password" v-model="password" placeholder="Password">
+      <input type="text" v-model="email" placeholder="Email" @input="(e) => {errorMsg = ''}">
+      <input type="password"
+        v-model="password"
+        placeholder="Password"
+        @input="(e) => {errorMsg = ''}">
       <button type="submit">Submit</button>
     </form>
+    <span v-if="errorMsg" style="color: red; font-size: 0.8em">{{errorMsg}} </span>
   </div>
 </template>
 
@@ -41,6 +45,7 @@ export default {
     return {
       email: undefined,
       password: undefined,
+      errorMsg: '',
     };
   },
   props: ['isConnected', 'currentUser'],
@@ -54,10 +59,11 @@ export default {
 
           this.$router.replace('/menus');
         }, (err) => {
-          console.log(`Error:  ${err.message}`);
+          this.errorMsg = err.message;
+          // console.log(`Error:  ${err.message}`);
         });
       } else {
-        console.log('[Sign In] Invalid Credentials');
+        this.errorMsg = 'Invalid Credentials';
       }
     },
     signout() {

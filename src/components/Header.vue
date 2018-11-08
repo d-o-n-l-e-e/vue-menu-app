@@ -2,8 +2,8 @@
   <header>
     <h1 class="logo">
       <router-link to="/">
-        <span v-if="currentUser">{{userMenu.storeName}}</span>
-        <span v-if="!currentUser">Your Menu</span>
+        <span v-if="userMenu">{{userMenu.storeName}}</span>
+        <span v-if="!userMenu">Your Menu</span>
       </router-link>
     </h1>
     <Navigation v-bind:userMenu="userMenu"/>

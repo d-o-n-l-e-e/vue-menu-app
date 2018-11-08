@@ -1,9 +1,18 @@
 <template>
   <div id="#home" class="home page-wrapper">
+    <div v-if="!currentUser">
+      <p>Log in if you already have an account or sign up if do not.</p>
+      <p>(Note:
+        Each account is tied to a unique email, but the email address does not get validated.
+        So feel free to use a fake email.
+        )
+      </p>
+      <hr>
+    </div>
     <SignUp v-if="isConnected && !currentUser"/>
-    <div v-if="isConnected && currentUser && userData">
-      <p>Logged in as: {{userData.storeName}}</p>
-      <router-link to="/menu">View Menu</router-link>
+    <div v-if="isConnected && userMenu">
+      <p>Logged in as: {{userMenu.storeName}}</p>
+      <p><router-link :to="`/menu/${userMenu.storeName}`">View Menu</router-link></p>
     </div>
   </div>
 </template>
@@ -24,6 +33,11 @@ h1 {
   margin: 0;
   line-height: 45px;
 }
+p {
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+}
 </style>
 
 <script>
@@ -34,6 +48,6 @@ export default {
   components: {
     SignUp,
   },
-  props: ['isConnected', 'currentUser', 'userData'],
+  props: ['isConnected', 'currentUser', 'userData', 'userMenu'],
 };
 </script>

@@ -52,7 +52,7 @@ export default {
           this.email = '';
           this.password = '';
 
-          this.$router.replace('/sample');
+          this.$router.replace('/menus');
         }, (err) => {
           console.log(`Error:  ${err.message}`);
         });

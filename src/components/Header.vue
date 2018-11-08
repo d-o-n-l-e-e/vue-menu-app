@@ -2,11 +2,11 @@
   <header>
     <h1 class="logo">
       <router-link to="/">
-        <span v-if="userData">{{userData.storeName}}</span>
-        <span v-if="!userData">Menuon</span>
+        <span v-if="currentUser">{{userMenu.storeName}}</span>
+        <span v-if="!currentUser">Your Menu</span>
       </router-link>
     </h1>
-    <Navigation v-if="userData"/>
+    <Navigation v-bind:userMenu="userMenu"/>
     <SignInSignOut
       v-bind:isConnected="isConnected"
       v-bind:currentUser="currentUser"
@@ -40,6 +40,6 @@ export default {
     Navigation,
     SignInSignOut,
   },
-  props: ['isConnected', 'currentUser', 'userData'],
+  props: ['isConnected', 'currentUser', 'userMenu'],
 };
 </script>

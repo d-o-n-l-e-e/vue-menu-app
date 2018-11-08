@@ -50,23 +50,22 @@ export default {
       if (this.storeName && this.email && this.password) {
         firebase.auth().createUserWithEmailAndPassword(this.email, this.password).then((res) => {
           firebase.firestore().collection('users').doc(res.user.uid).set({
-            storeName: this.storeName,
             email: res.user.email,
-            menu: null,
           })
             .then(() => {
-              console.log('Document successfully written!');
-            })
-            .catch((error) => {
-              console.error('Error writing document: ', error);
+              console.log('User Created: ', res.user);
+              firebase.firestore().collection('menus').doc(res.user.email).set({
+                storeName: this.storeName,
+                email: res.user.email,
+                menu: null,
+              })
+                .then(() => {
+                  this.$router.replace(`/menu/${this.storeName}`);
+                  this.storeName = '';
+                  this.email = '';
+                  this.password = '';
+                });
             });
-
-          this.$router.replace('/menu');
-
-          console.log('User Created: ', res.user);
-          this.storeName = '';
-          this.email = '';
-          this.password = '';
         }, (err) => {
           this.error = err.message;
           console.log('Error: ', err.message);

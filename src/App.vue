@@ -4,6 +4,7 @@
       v-bind:isConnected="connected"
       v-bind:currentUser="currentUser"
       v-bind:userData="userData"
+      v-bind:userMenu="userMenu"
     />
     <router-view
       v-show="connected"
@@ -11,6 +12,7 @@
       v-bind:currentUser="currentUser"
       v-bind:currentUserID="currentUserID"
       v-bind:userData="userData"
+      v-bind:userMenu="userMenu"
     />
   </main>
 </template>
@@ -55,6 +57,7 @@ export default {
       currentUser: null,
       currentUserID: null,
       userData: null,
+      userMenu: null,
     };
   },
   created() {
@@ -69,12 +72,28 @@ export default {
 
         userDoc.onSnapshot((doc) => {
           if (doc.exists) {
-            console.log('Current Document data:', doc.data());
+            // console.log('Current Document data:', doc.data());
             this.userData = doc.data();
             this.$store.dispatch('updateUserData', doc.data());
           } else {
             // doc.data() will be undefined in this case
-            console.log('No such document!');
+            // console.log('No such document!');
+          }
+        }, (err) => {
+          console.log(`Error:  ${err.message}`);
+        });
+
+        console.log('User', user);
+        const userMenu = firebase.firestore().collection('menus').doc(user.email);
+
+        userMenu.onSnapshot((doc) => {
+          if (doc.exists) {
+            // console.log('Current Document data:', doc.data());
+            this.userMenu = doc.data();
+            this.$store.dispatch('updateUserMenu', doc.data());
+          } else {
+            // doc.data() will be undefined in this case
+            // console.log('No such document!');
           }
         }, (err) => {
           console.log(`Error:  ${err.message}`);

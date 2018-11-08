@@ -1,10 +1,10 @@
 <template>
   <div id="#menu" class="menu page-wrapper">
-    <h2 v-if="userData">
-      {{userData.storeName}}
+    <h2 v-if="store">
+      {{store.storeName}}
     </h2>
 
-    <div class="modeToggle-ctn" v-if="userData && userData.email == currentUser">
+    <div class="modeToggle-ctn" v-if="store && store.email == currentUser">
       <button class="edit-btn" v-show="mode == 'view'" @click="toggleEdit">
         Edit
       </button>
@@ -17,7 +17,10 @@
     </div>
 
     <div class="mode-ctn" v-bind:class="mode == 'view' ? 'view-mode' : 'edit-mode'">
-      <div class="edit-ctn" v-if="userData && userData.email == currentUser" v-show="mode == 'edit'"></div>
+      <div class="edit-ctn"
+        v-if="store && store.email == currentUser"
+        v-show="mode == `edit`">
+      </div>
       <div class="view-ctn"></div>
     </div>
   </div>
@@ -121,12 +124,21 @@ h2 {
 <style lang="scss">
 .view-ctn {
   .section-view {
+    & {
+      margin-bottom: 40px;
+    }
     h3 {
+      margin: 0 auto 10px;
+      text-align: center;
+    }
+    p {
+      padding: 0 20px;
       margin: 0 auto 20px;
       text-align: center;
     }
     table {
       width: 100%;
+      margin: 0 auto 10px;
     }
     .name {
       font-weight: 600;
@@ -147,20 +159,36 @@ import 'firebase/auth';
 import 'firebase/firestore';
 
 export default {
-  name: 'sample',
   data() {
     return {
       mode: 'view',
-      menu: [],
+      store: [],
+      menuData: [],
       draft: [],
     };
   },
-  props: ['isConnected', 'currentUser', 'currentUserID', 'userData'],
+  props: ['isConnected', 'currentUser', 'currentUserID', 'userData', 'userMenu', 'storeEmail'],
   mounted() {
-    if (this.userData.menu) {
-      this.menu = this.userData.menu;
-    }
-    this.updateView(this.menu);
+    firebase.firestore().collection('menus').where('storeName', '==', this.$route.params.storeName)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          this.store = doc.data();
+          this.menuData = this.store.menu;
+          this.updateView(this.menuData);
+        });
+
+        // set listener
+        firebase.firestore().collection('menus').doc(this.store.email)
+          .onSnapshot((doc) => {
+            this.store = doc.data();
+            this.menuData = this.store.menu;
+            this.updateView(this.menuData);
+          });
+      })
+      .catch((error) => {
+        console.log('Error getting documents: ', error);
+      });
   },
   methods: {
     toggleEdit() {
@@ -169,9 +197,9 @@ export default {
     },
     saveData() {
       this.mode = 'view';
-      this.menu = this.draft;
-      firebase.firestore().collection('users').doc(this.currentUserID).update({
-        menu: this.menu,
+      this.menuData = this.draft;
+      firebase.firestore().collection('menus').doc(this.currentUser).update({
+        menu: this.menuData,
       });
     },
     addSection(section) {
@@ -205,14 +233,14 @@ export default {
       const removeSectionBtnEl = document.createElement('button');
       removeSectionBtnEl.className = 'remove-section-btn';
       removeSectionBtnEl.innerHTML = '&times;';
-      removeSectionBtnEl.addEventListener('click', (ee) => {
+      removeSectionBtnEl.addEventListener('click', () => {
         sectionsCtn.removeChild(newSection);
         this.updateData();
       });
       newSection.insertAdjacentElement('beforeEnd', removeSectionBtnEl);
 
       if (section && section.items.length) {
-        section.items.forEach((menuItem, i) => {
+        section.items.forEach((menuItem) => {
           newSection.insertAdjacentElement('beforeEnd', addItemBtnEl);
           this.addMenuItem(addItemBtnEl, menuItem);
         });
@@ -250,7 +278,7 @@ export default {
       const removeItemBtnEl = document.createElement('button');
       removeItemBtnEl.className = 'remove-item-btn';
       removeItemBtnEl.innerHTML = '&times;';
-      removeItemBtnEl.addEventListener('click', (ee) => {
+      removeItemBtnEl.addEventListener('click', () => {
         newItem.outerHTML = '';
         this.updateData();
       });
@@ -260,7 +288,7 @@ export default {
     },
     cancelEdit() {
       this.mode = 'view';
-      this.updateView(this.menu);
+      this.updateView(this.menuData);
     },
     updateData() {
       this.draft = [];
@@ -288,8 +316,8 @@ export default {
       const editCtn = document.querySelector('.edit-ctn');
       editCtn.innerHTML = '<div class="edit-sections"></div>';
 
-      if (this.menu) {
-        this.menu.forEach((section, i) => {
+      if (this.menuData) {
+        this.menuData.forEach((section) => {
           this.addSection(section);
         });
       }
@@ -297,16 +325,16 @@ export default {
       const addSectionBtnEl = document.createElement('button');
       addSectionBtnEl.className = 'add-section-btn';
       addSectionBtnEl.innerText = 'Add Section';
-      addSectionBtnEl.addEventListener('click', (ee) => {
+      addSectionBtnEl.addEventListener('click', () => {
         this.addSection();
       });
 
       editCtn.appendChild(addSectionBtnEl);
     },
-    updateView(menu) {
+    updateView(menuData) {
       const viewCtnEl = document.querySelector('.view-ctn');
       let viewCtnMarkup = '';
-      menu.forEach((section) => {
+      menuData.forEach((section) => {
         viewCtnMarkup += '<div class="section-view">';
         if (section.name) viewCtnMarkup += `<h3>${section.name}</h3>`;
         if (section.desc) viewCtnMarkup += `<p>${section.desc}</p>`;

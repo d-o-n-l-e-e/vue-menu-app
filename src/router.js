@@ -5,6 +5,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Home from './views/Home.vue';
 import Menu from './views/Menu.vue';
+import Menus from './views/Menus.vue';
 import Test from './views/Test.vue';
 
 Vue.use(Router);
@@ -23,12 +24,20 @@ const router = new Router({
       },
     },
     {
-      path: '/menu',
+      path: '/menu/:storeName',
       name: 'menu',
       component: Menu,
       meta: {
         title: `${appTitle} | Menu`,
         requiresAuth: true,
+      },
+    },
+    {
+      path: '/menus',
+      name: 'menus',
+      component: Menus,
+      meta: {
+        title: `${appTitle} | Menus`,
       },
     },
     {
@@ -45,7 +54,7 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title;
 
-  const currentUser = firebase.auth().currentUser;
+  const { currentUser } = firebase.auth();
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 
   if (requiresAuth && !currentUser) {

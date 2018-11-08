@@ -7,21 +7,31 @@ const user = {
   state: {
     currentUser: null,
     userData: null,
+    userMenu: null,
   },
   mutations: {
-    updateUser(state, userObj) {
+    UDPATE_USER(context, userObj) {
+      const state = context;
       state.currentUser = userObj;
     },
-    updateUserData(state, userData) {
+    UPDATE_USER_DATA(context, userData) {
+      const state = context;
       state.userData = userData;
+    },
+    UPDATE_USER_MENU(context, userMenu) {
+      const state = context;
+      state.userMenu = userMenu;
     },
   },
   actions: {
     updateUser(context, userObj) {
-      context.commit('updateUser', userObj);
+      context.commit('UDPATE_USER', userObj);
     },
     updateUserData(context, userData) {
-      context.commit('updateUserData', userData);
+      context.commit('UPDATE_USER_DATA', userData);
+    },
+    updateUserMenu(context, userMenu) {
+      context.commit('UPDATE_USER_MENU', userMenu);
     },
   },
   getters: {

@@ -1,7 +1,10 @@
 <template>
   <ul id="nav">
     <li>
-      <router-link to="/menu">Menu</router-link>
+      <router-link :to="`/menus`">Menus</router-link>
+    </li>
+    <li>
+      <router-link :to="`/menu/${userMenu.storeName}`" v-if="userMenu">Your Menu</router-link>
     </li>
   </ul>
 </template>
@@ -32,3 +35,9 @@
   }
 }
 </style>
+<script>
+export default {
+  name: 'navigation',
+  props: ['userMenu'],
+};
+</script>

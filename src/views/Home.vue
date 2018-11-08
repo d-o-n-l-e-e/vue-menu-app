@@ -34,7 +34,7 @@ h1 {
   line-height: 45px;
 }
 p {
-  max-width: 400px;
+  max-width: 500px;
   margin: 0 auto;
   text-align: center;
 }

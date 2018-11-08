@@ -6,7 +6,7 @@
         <span v-if="!userMenu">Your Menu</span>
       </router-link>
     </h1>
-    <Navigation v-bind:userMenu="userMenu"/>
+    <Navigation v-if="userMenu" v-bind:userMenu="userMenu"/>
     <SignInSignOut
       v-bind:isConnected="isConnected"
       v-bind:currentUser="currentUser"

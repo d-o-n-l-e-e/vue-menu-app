@@ -14,7 +14,7 @@ const appTitle = 'Menu';
 
 const router = new Router({
   // mode: 'history',
-  base: '/vue-menu-app/',
+  // base: '/vue-menu-app/',
   routes: [
     {
       path: '/',

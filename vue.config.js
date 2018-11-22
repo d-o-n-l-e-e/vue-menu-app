@@ -1,4 +1,4 @@
 module.exports = {
   lintOnSave: false,
-  baseUrl: '/vue-menu-app/',
+  // baseUrl: '/vue-menu-app/',
 };
